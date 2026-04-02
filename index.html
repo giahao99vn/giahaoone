@@ -202,7 +202,7 @@
                                     <span id="res-discount" class="font-bold text-lg">-0đ</span>
                                 </div>
                                 <div id="ctv-row" class="hidden flex justify-between bg-black/20 p-4 rounded-xl border border-white/10">
-                                    <span class="font-bold text-sm">Giá dành cho khách hàng cũ (-10%)</span>
+                                    <span class="font-bold text-sm">Giá dành cho khách hàng cũ (-15%)</span>
                                     <span id="res-ctv" class="font-black text-xl">0đ</span>
                                 </div>
                             </div>
@@ -393,7 +393,7 @@
                         </li>
                         <li>
                             <div class="flex justify-between items-end mb-2">
-                                <span class="text-xs font-bold text-gray-700 uppercase">Độ bền xé</span>
+                                <span class="text-xs font-bold text-gray-700 uppercase">Độ bền kéo</span>
                                 <span class="text-xs font-black text-purple-600">90%</span>
                             </div>
                             <div class="stat-bar"><div class="bg-purple-500 h-full rounded w-[90%]"></div></div>
@@ -443,7 +443,7 @@
             </div>
             
             <div class="py-10 text-center">
-                <p class="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.5em]">© 2026 GIAHAOONE PRINT 3D - KIÊN GIANG • MADE WITH CHẤT LƯỢNG</p>
+                <p class="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.5em]">© 2026 GIAHAOONE PRINT 3D - KIÊN GIANG • </p>
             </div>
         </div>
     </footer>
@@ -537,7 +537,7 @@
 
             if (pass === CTV_PASSWORD) {
                 ctvRow.classList.remove('hidden');
-                resCtv.innerText = formatVND(finalTotal * 0.8);
+                resCtv.innerText = formatVND(finalTotal * 0.85);
             } else {
                 ctvRow.classList.add('hidden');
             }
