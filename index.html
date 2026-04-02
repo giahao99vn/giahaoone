@@ -510,9 +510,9 @@
                 return;
             }
 
-            let rate = weight >= 300 ? pricing[mat].over : pricing[mat].under;
+            let rate = weight >= 400 ? pricing[mat].over : pricing[mat].under;
             
-            if (weight >= 300) {
+            if (weight >= 400) {
                 rateInfo.innerText = `Ưu đãi in số lượng lớn: Đơn giá ${rate}đ/g`;
                 rateInfo.className = "mt-4 text-sm font-black text-bambu";
             } else {
