@@ -207,8 +207,8 @@
                                     <span id="res-subtotal" class="font-bold text-lg">0đ</span>
                                 </div>
                                 <div class="flex justify-between border-b border-white/20 pb-4">
-                                    <span class="text-white/80 text-sm">Ưu đãi nếu bạn in > 400g</span>
-                                    <span id="res-discount" class="font-bold text-lg">Một móc khóa cute phô mai que phiên bản giới hạn </span>
+                                    <span class="text-white/80 text-sm">Ưu đãi với đơn hàng từ 500k/span>
+                                    <span id="res-discount" class="font-bold text-lg">-1 </span>
                                 </div>
                                 <div id="ctv-row" class="hidden flex justify-between bg-black/20 p-4 rounded-xl border border-white/10">
                                     <span class="font-bold text-sm">Giá dành cho khách hàng cũ (-5%)</span>
@@ -526,7 +526,7 @@
             if (weight >= 400) {
                 rateInfo.innerText = `Ưu đãi in số lượng lớn: Đơn giá ${rate}đ/g`;
                 rateInfo.className = "mt-4 text-sm font-black text-bambu";
-                resDiscount.innerText = 'Tặng bạn một móc khóa in 3D đặc biệt';
+            
             } else {
                 rateInfo.innerText = `Mức giá chuẩn: Đơn giá ${rate}đ/g`;
                 rateInfo.className = "mt-4 text-sm font-bold text-primary-blue";
