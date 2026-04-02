@@ -202,7 +202,7 @@
                                     <span id="res-discount" class="font-bold text-lg">-0đ</span>
                                 </div>
                                 <div id="ctv-row" class="hidden flex justify-between bg-black/20 p-4 rounded-xl border border-white/10">
-                                    <span class="font-bold text-sm">GIÁ CTV (-30%)</span>
+                                    <span class="font-bold text-sm">Giá dành cho khách hàng cũ (-20%)</span>
                                     <span id="res-ctv" class="font-black text-xl">0đ</span>
                                 </div>
                             </div>
@@ -537,7 +537,7 @@
 
             if (pass === CTV_PASSWORD) {
                 ctvRow.classList.remove('hidden');
-                resCtv.innerText = formatVND(finalTotal * 0.7);
+                resCtv.innerText = formatVND(finalTotal * 0.8);
             } else {
                 ctvRow.classList.add('hidden');
             }
