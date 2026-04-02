@@ -460,13 +460,13 @@
 
     <script>
         const pricing = {
-            petg: { under: 1000, over: 600 },
-            pla: { under: 1100, over: 700 },
-            abs: { under: 1200, over: 800 }
+            petg: { under: 1000, over: 550 },
+            pla: { under: 1100, over: 650 },
+            abs: { under: 1200, over: 750 }
         };
 
         const MIN_PRICE = 20000;
-        const CTV_PASSWORD = "giahao";
+        const CTV_PASSWORD = "123456";
 
         const materialInput = document.getElementById('calc-material');
         const weightInput = document.getElementById('calc-weight');
@@ -510,9 +510,9 @@
                 return;
             }
 
-            let rate = weight >= 450 ? pricing[mat].over : pricing[mat].under;
+            let rate = weight >= 300 ? pricing[mat].over : pricing[mat].under;
             
-            if (weight >= 450) {
+            if (weight >= 300) {
                 rateInfo.innerText = `Ưu đãi in số lượng lớn: Đơn giá ${rate}đ/g`;
                 rateInfo.className = "mt-4 text-sm font-black text-bambu";
             } else {
@@ -542,7 +542,7 @@
 
             if (pass === CTV_PASSWORD) {
                 ctvRow.classList.remove('hidden');
-                resCtv.innerText = formatVND(finalTotal * 0.95);
+                resCtv.innerText = formatVND(finalTotal * 0.7);
             } else {
                 ctvRow.classList.add('hidden');
             }
