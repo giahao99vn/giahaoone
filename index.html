@@ -78,6 +78,47 @@
         }
 
         .stat-bar { height: 8px; border-radius: 4px; background: #f1f5f9; border: 1px solid #e2e8f0; overflow: hidden; }
+        .product-3d-container {
+        width: 100%;
+        height: 500px;
+        background-color: #f5f5f5;
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    model-viewer {
+        width: 100%;
+        height: 100%;
+        --poster-color: transparent;
+    }
+
+    .ar-button {
+        background-color: #ff4d4d;
+        border-radius: 20px;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    #ar-prompt {
+        position: absolute;
+        bottom: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: none;
+    }
+
+    model-viewer[ar-status="session-started"] > #ar-prompt {
+        display: block;
+    }
     </style>
 </head>
 <body>
@@ -146,6 +187,30 @@
            
         </div>
     </section>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+<div class="product-3d-container">
+    <model-viewer 
+        src="https://sketchfab.com/models/a062b76080614cb79f8a4cb5645a97f0/embed" 
+        ios-src="https://sketchfab.com/models/a062b76080614cb79f8a4cb5645a97f0/embed"
+        poster="https://i.postimg.cc/yN3CLd2f/3081bc9a-cd2b-4c03-9eff-3d41493cb3d6.jpg"
+        alt="Mô hình 3D Đèn Nón Lá Giahaoone"
+        shadow-intensity="1" 
+        camera-controls 
+        auto-rotate 
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        touch-action="pan-y">
+        
+        <button slot="ar-button" class="ar-button">
+            Xem trong không gian thực (AR)
+        </button>
+
+        <div id="ar-prompt">
+            <img src="https://modelviewer.dev/shared-assets/icons/hand.png">
+        </div>
+    </model-viewer>
+</div>
 
     <!-- Professional Calculator Section -->
     <section id="calculator" class="section-padding bg-white">
