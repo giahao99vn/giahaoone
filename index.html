@@ -277,9 +277,9 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-400 mb-2">Vật liệu in</label>
                     <select id="material" class="w-full bg-gray-950 border border-gray-700 rounded-xl p-4 text-white outline-none">
-                        <option value="1500" data-density="1.24">Nhựa PLA (1.24 g/cm³) - 1.500đ/g</option>
-                        <option value="2000" data-density="1.27">Nhựa PETG (1.27 g/cm³) - 2.000đ/g</option>
-                        <option value="2500" data-density="1.04">Nhựa ABS (1.04 g/cm³) - 2.500đ/g</option>
+                        <option value="1100" data-density="1.24">Nhựa PLA (1.24 g/cm³) - 1.100đ/g</option>
+                        <option value="1000" data-density="1.27">Nhựa PETG (1.27 g/cm³) - 1.000đ/g</option>
+                        <option value="1200" data-density="1.04">Nhựa ABS (1.04 g/cm³) - 1.200đ/g</option>
                     </select>
                 </div>
                 
@@ -747,6 +747,7 @@
         // Initialize with PETG
         setMaterial('petg');
         [weightInput, passwordInput].forEach(el => el.addEventListener('input', calculate));
+        
      // 1. Cài đặt biến giao diện
         const fileInput = document.getElementById('file-input');
         const viewerContainer = document.getElementById('viewer-container');
