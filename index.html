@@ -6,10 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GIAHAOOne – Dịch vụ Thiết kế Kỹ thuật (Design for Additive Manufacturing - DfAM), chế tạo nhanh linh kiện kỹ thuật chính xác bằng phần mềm Creo và máy in công nghiệp tại Kiên Giang.</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cloudflare.com">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    
 
     <style>
         :root {
@@ -246,6 +250,60 @@
         </div>
     </model-viewer>
 </div>
+    <section class="container mx-auto py-12 px-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <div class="lg:col-span-7 relative bg-gray-900 rounded-2xl border border-gray-800 shadow-2xl h-[500px] overflow-hidden">
+            
+            <div id="viewer-container" class="absolute inset-0 z-0 cursor-move"></div>
+            
+            <div id="placeholder" class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-900">
+                <svg class="h-16 w-16 text-blue-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                <h3 class="text-2xl font-bold mb-2">Tải lên mô hình 3D</h3>
+                <p class="text-gray-400 mb-6">Hỗ trợ định dạng STL xuất từ Creo.</p>
+                <input type="file" id="file-input" class="hidden" accept=".stl">
+                <button onclick="document.getElementById('file-input').click()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(37,99,235,0.5)]">Chọn File Khảo Giá</button>
+            </div>
+
+            <div id="loading" class="hidden absolute inset-0 z-20 bg-gray-950/90 flex flex-col items-center justify-center">
+                <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div>
+                <span class="text-lg font-medium text-blue-400">Đang dựng lưới hình học...</span>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-gray-900 rounded-2xl p-8 border border-gray-800 shadow-2xl flex flex-col">
+            <h2 class="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-4">Thông số & Báo giá</h2>
+            
+            <div class="space-y-6 flex-grow">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-2">Vật liệu in</label>
+                    <select id="material" class="w-full bg-gray-950 border border-gray-700 rounded-xl p-4 text-white outline-none">
+                        <option value="1500" data-density="1.24">Nhựa PLA (1.24 g/cm³) - 1.500đ/g</option>
+                        <option value="2000" data-density="1.27">Nhựa PETG (1.27 g/cm³) - 2.000đ/g</option>
+                        <option value="2500" data-density="1.04">Nhựa ABS (1.04 g/cm³) - 2.500đ/g</option>
+                    </select>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Kích thước bao (mm)</p>
+                        <p class="text-sm font-mono text-gray-300 mt-1" id="dim-display">0 x 0 x 0</p>
+                    </div>
+                    <div class="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Trọng lượng (g)</p>
+                        <p class="text-lg font-mono text-blue-400 mt-1 font-bold" id="weight-display">0.00</p>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-6 border-t border-gray-800">
+                    <div class="flex justify-between items-end mb-6">
+                        <span class="text-gray-400 font-medium">Chi phí dự kiến:</span>
+                        <span class="text-4xl font-black text-green-400" id="price-display">0đ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 
     <!-- Professional Calculator Section -->
     <section id="calculator" class="section-padding bg-white">
@@ -689,6 +747,129 @@
         // Initialize with PETG
         setMaterial('petg');
         [weightInput, passwordInput].forEach(el => el.addEventListener('input', calculate));
+     // 1. Cài đặt biến giao diện
+        const fileInput = document.getElementById('file-input');
+        const viewerContainer = document.getElementById('viewer-container');
+        const placeholder = document.getElementById('placeholder');
+        const loading = document.getElementById('loading');
+        const priceDisplay = document.getElementById('price-display');
+        const weightDisplay = document.getElementById('weight-display');
+        const dimDisplay = document.getElementById('dim-display');
+        const materialSelect = document.getElementById('material');
+
+        let currentVolumeCM3 = 0;
+        let currentMesh = null;
+
+        // 2. Khởi tạo môi trường Three.js
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, viewerContainer.clientWidth / viewerContainer.clientHeight, 0.1, 1000);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(viewerContainer.clientWidth, viewerContainer.clientHeight);
+        viewerContainer.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); 
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(1, 1, 1).normalize();
+        scene.add(directionalLight);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Xử lý khi màn hình bị thu phóng
+        window.addEventListener('resize', () => {
+            const width = viewerContainer.clientWidth;
+            const height = viewerContainer.clientHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+
+        // 3. Hàm tính thể tích lưới
+        function calculateVolume(geometry) {
+            let position = geometry.attributes.position;
+            let faces = position.count / 3;
+            let sum = 0;
+            let p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3();
+            for (let i = 0; i < faces; i++) {
+                p1.fromBufferAttribute(position, i * 3 + 0);
+                p2.fromBufferAttribute(position, i * 3 + 1);
+                p3.fromBufferAttribute(position, i * 3 + 2);
+                sum += p1.dot(p2.clone().cross(p3)) / 6.0;
+            }
+            return Math.abs(sum); 
+        }
+
+        // 4. Hàm cập nhật giá
+        function updatePricing() {
+            if (currentVolumeCM3 === 0) return;
+            const selectedOption = materialSelect.options[materialSelect.selectedIndex];
+            const pricePerGram = parseInt(selectedOption.value);
+            const density = parseFloat(selectedOption.getAttribute('data-density'));
+
+            const weightGram = currentVolumeCM3 * density;
+            const totalPrice = Math.round(weightGram * pricePerGram);
+
+            weightDisplay.innerText = `${weightGram.toFixed(1)}`;
+            priceDisplay.innerText = `${totalPrice.toLocaleString('vi-VN')} đ`;
+        }
+        materialSelect.addEventListener('change', updatePricing);
+
+        // 5. Nạp file STL và Render
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            loading.classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const contents = event.target.result;
+                const loader = new THREE.STLLoader();
+                
+                try {
+                    const geometry = loader.parse(contents);
+                    
+                    // Tính toán thông số
+                    currentVolumeCM3 = calculateVolume(geometry) / 1000;
+                    geometry.computeBoundingBox();
+                    const box = geometry.boundingBox;
+                    dimDisplay.innerText = `${Math.abs(box.max.x - box.min.x).toFixed(1)} x ${Math.abs(box.max.y - box.min.y).toFixed(1)} x ${Math.abs(box.max.z - box.min.z).toFixed(1)}`;
+                    
+                    updatePricing();
+
+                    // Vẽ 3D
+                    if (currentMesh) scene.remove(currentMesh);
+                    
+                    const material = new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.5 });
+                    currentMesh = new THREE.Mesh(geometry, material);
+                    
+                    geometry.center();
+                    scene.add(currentMesh);
+
+                    geometry.computeBoundingSphere();
+                    camera.position.z = geometry.boundingSphere.radius * 2.5;
+
+                    // Ẩn bảng chờ đi để lộ khung 3D bên dưới
+                    placeholder.classList.add('hidden');
+
+                } catch (error) {
+                    console.error("Chi tiết lỗi:", error);
+                    alert("Có lỗi xảy ra khi đọc file STL. Vui lòng thử một file khác.");
+                } finally {
+                    loading.classList.add('hidden');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });   
     </script>
 </body>
 </html>
