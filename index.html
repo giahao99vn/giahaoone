@@ -185,6 +185,7 @@
                         <button onclick="document.getElementById('file-input').click()" class="btn-brand px-8 py-3 rounded-xl font-bold">
                             Chọn File Phân Tích
                         </button>
+                        <p id="file-error" class="hidden text-red-400 text-sm mt-4 font-medium"><i class="fa-solid fa-triangle-exclamation"></i> Dung lượng file quá lớn!</p>
                     </div>
                     <div id="loading" class="hidden absolute inset-0 z-20 bg-slate-900/90 flex flex-col items-center justify-center">
                         <i class="fa-solid fa-circle-notch fa-spin text-4xl text-viet-gold mb-4"></i>
@@ -842,36 +843,63 @@
             return Math.abs(sum); 
         }
 
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0]; if (!file) return;
-            loading.classList.remove('hidden');
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                try {
-                    const geometry = new THREE.STLLoader().parse(event.target.result);
-                    currentVolumeCM3 = calculateVolume(geometry) / 1000;
-                    geometry.computeBoundingBox(); const box = geometry.boundingBox;
-                    document.getElementById('dim-display').innerHTML = `${Math.abs(box.max.x - box.min.x).toFixed(1)} x ${Math.abs(box.max.y - box.min.y).toFixed(1)} x ${Math.abs(box.max.z - box.min.z).toFixed(1)} <span class="text-xs">mm</span>`;
-                    
-                    const updatePricing3D = () => {
-                        if (currentVolumeCM3 === 0) return;
-                        const opt = materialSelect.options[materialSelect.selectedIndex];
-                        const weight = currentVolumeCM3 * parseFloat(opt.getAttribute('data-density'));
-                        document.getElementById('weight-display').innerHTML = `${weight.toFixed(1)} <span class="text-sm">g</span>`;
-                        document.getElementById('price-display').innerText = `${Math.round(weight * parseInt(opt.value)).toLocaleString('vi-VN')} đ`;
-                    };
-                    materialSelect.addEventListener('change', updatePricing3D); updatePricing3D();
+      // Khai báo thêm biến gọi thông báo lỗi
+const fileError = document.getElementById('file-error');
 
-                    if (currentMesh) scene.remove(currentMesh);
-                    // Đổi màu khối in 3D sang màu Vàng Đồng cho hợp theme
-                    currentMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0xD4AF37, roughness: 0.4, metalness: 0.3 }));
-                    geometry.center(); scene.add(currentMesh);
-                    geometry.computeBoundingSphere(); camera.position.z = geometry.boundingSphere.radius * 2.5;
-                    placeholder.classList.add('opacity-0', 'pointer-events-none');
-                } catch (error) { alert("Lỗi đọc file STL."); } finally { loading.classList.add('hidden'); }
+fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0]; 
+    if (!file) return;
+
+    // Reset lại thông báo lỗi (ẩn đi nếu đang hiện)
+    fileError.classList.add('hidden');
+
+    // --- BẮT ĐẦU: KIỂM TRA DUNG LƯỢNG FILE ---
+    const maxSizeMB = 50; // Giới hạn 50MB (bạn có thể thay đổi số này)
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    
+    if (file.size > maxSizeBytes) {
+        const actualSize = (file.size / (1024 * 1024)).toFixed(1);
+        // Hiển thị lỗi
+        fileError.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> File quá lớn (${actualSize}MB). Vui lòng chọn file dưới ${maxSizeMB}MB để đảm bảo trải nghiệm.`;
+        fileError.classList.remove('hidden');
+        
+        // Reset input để người dùng có thể click chọn lại đúng file đó nếu họ nén lại
+        e.target.value = ''; 
+        return; // Dừng lại, không đưa vào FileReader nữa
+    }
+    // --- KẾT THÚC: KIỂM TRA DUNG LƯỢNG FILE ---
+
+    loading.classList.remove('hidden');
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        try {
+            const geometry = new THREE.STLLoader().parse(event.target.result);
+            currentVolumeCM3 = calculateVolume(geometry) / 1000;
+            geometry.computeBoundingBox(); const box = geometry.boundingBox;
+            document.getElementById('dim-display').innerHTML = `${Math.abs(box.max.x - box.min.x).toFixed(1)} x ${Math.abs(box.max.y - box.min.y).toFixed(1)} x ${Math.abs(box.max.z - box.min.z).toFixed(1)} <span class="text-xs">mm</span>`;
+            
+            const updatePricing3D = () => {
+                if (currentVolumeCM3 === 0) return;
+                const opt = materialSelect.options[materialSelect.selectedIndex];
+                const weight = currentVolumeCM3 * parseFloat(opt.getAttribute('data-density'));
+                document.getElementById('weight-display').innerHTML = `${weight.toFixed(1)} <span class="text-sm">g</span>`;
+                document.getElementById('price-display').innerText = `${Math.round(weight * parseInt(opt.value)).toLocaleString('vi-VN')} đ`;
             };
-            reader.readAsArrayBuffer(file);
-        });
+            materialSelect.addEventListener('change', updatePricing3D); updatePricing3D();
+
+            if (currentMesh) scene.remove(currentMesh);
+            currentMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0xD4AF37, roughness: 0.4, metalness: 0.3 }));
+            geometry.center(); scene.add(currentMesh);
+            geometry.computeBoundingSphere(); camera.position.z = geometry.boundingSphere.radius * 2.5;
+            placeholder.classList.add('opacity-0', 'pointer-events-none');
+        } catch (error) { 
+            alert("Lỗi đọc file STL. File có thể bị hỏng hoặc sai định dạng."); 
+        } finally { 
+            loading.classList.add('hidden'); 
+        }
+    };
+    reader.readAsArrayBuffer(file);
+});
         // --------------------------------------------------
         // TÍNH NĂNG LÊN ĐẦU TRANG (BACK TO TOP)
         // --------------------------------------------------
