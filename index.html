@@ -448,6 +448,20 @@
         </button>
     </div>
 
+    <div class="floating-tools fixed bottom-6 right-6 z-[100] flex flex-col gap-3">
+        <button id="backToTopBtn" onclick="scrollToTop()" class="w-14 h-14 bg-slate-900 border border-brand-500 text-brand-500 rounded-full shadow-[0_0_15px_rgba(14,165,233,0.3)] flex items-center justify-center text-xl hover:scale-110 hover:bg-brand-500 hover:text-white transition-all duration-500 opacity-0 pointer-events-none translate-y-4">
+            <i class="fa-solid fa-arrow-up"></i>
+        </button>
+
+        <button id="audio-btn" class="w-14 h-14 bg-white rounded-full shadow-xl text-brand-600 flex items-center justify-center text-xl hover:scale-110 transition-transform border border-slate-100">
+            <i class="fa-solid fa-music"></i>
+        </button>
+        
+        <button onclick="openGame()" class="w-14 h-14 bg-viet-gold text-white rounded-full shadow-xl flex items-center justify-center text-xl hover:scale-110 transition-transform shadow-viet-gold/40">
+            <i class="fa-solid fa-gamepad"></i>
+        </button>
+    </div>
+
     <div id="game-modal" class="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-md hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-3xl max-w-2xl w-full mx-4 shadow-2xl relative border-t-4 border-viet-gold overflow-hidden">
             <div class="absolute inset-0 opacity-5 trong-dong-bg"></div>
@@ -471,11 +485,7 @@
             </div>
         </div>
     </div>
-      <!-- Back to top -->
-    <a href="#" class="fixed bottom-8 right-8 w-12 h-12 bg-bambu text-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition duration-300 z-50">
-        <i class="fas fa-chevron-up"></i>
-    </a>
-
+     
 
     <script>
         // --------------------------------------------------
@@ -735,6 +745,31 @@
             };
             reader.readAsArrayBuffer(file);
         });
+        // --------------------------------------------------
+        // TÍNH NĂNG LÊN ĐẦU TRANG (BACK TO TOP)
+        // --------------------------------------------------
+        const backToTopBtn = document.getElementById('backToTopBtn');
+
+        // Lắng nghe sự kiện cuộn chuột
+        window.addEventListener('scroll', () => {
+            // Nếu cuộn xuống quá 400px thì hiện nút lên
+            if (window.scrollY > 400) {
+                backToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                backToTopBtn.classList.add('opacity-100', 'translate-y-0');
+            } else {
+                // Nếu ở trên cùng thì ẩn nút đi
+                backToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+                backToTopBtn.classList.remove('opacity-100', 'translate-y-0');
+            }
+        });
+
+        // Hàm cuộn mượt mà lên top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
     </script>
 </body>
 </html>
