@@ -586,38 +586,23 @@
 
     <script>
         // --------------------------------------------------
-        // TÍNH NĂNG ÂM THANH (CÓ BẮT LỖI BẢO MẬT)
+        // TÍNH NĂNG ÂM THANH (AUDIO TOGGLE)
         // --------------------------------------------------
         const bgMusic = document.getElementById('bgMusic');
         const audioBtn = document.getElementById('audio-btn');
         let isPlaying = false;
 
-        // Cài đặt âm lượng mặc định (0.5 là 50% để nhạc nền không quá ồn)
-        bgMusic.volume = 0.5;
-
         audioBtn.addEventListener('click', () => {
             if (isPlaying) {
                 bgMusic.pause();
                 audioBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
-                audioBtn.classList.remove('animate-pulse', 'text-viet-gold', 'shadow-[0_0_20px_rgba(212,175,55,0.6)]');
-                isPlaying = false;
+                audioBtn.classList.remove('animate-pulse', 'text-viet-gold');
             } else {
-                // Sử dụng Promise để bắt lỗi nếu trình duyệt chặn
-                let playPromise = bgMusic.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        // Phát thành công
-                        audioBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                        audioBtn.classList.add('animate-pulse', 'text-viet-gold', 'shadow-[0_0_20px_rgba(212,175,55,0.6)]');
-                        isPlaying = true;
-                    }).catch(error => {
-                        // Báo lỗi nếu link hỏng hoặc bị trình duyệt chặn
-                        console.error("Lỗi phát nhạc:", error);
-                        alert("Không thể phát nhạc! Vui lòng kiểm tra lại file nhac-nen.mp3 đã để đúng thư mục chưa nhé.");
-                    });
-                }
+                bgMusic.play();
+                audioBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                audioBtn.classList.add('animate-pulse', 'text-viet-gold');
             }
+            isPlaying = !isPlaying;
         });
 
         // --------------------------------------------------
