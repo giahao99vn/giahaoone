@@ -79,6 +79,9 @@
         
         /* Floating Audio & Game Buttons */
         .floating-tools { position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 12px; }
+        
+        .stat-bar { width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+        .stat-fill { height: 100%; border-radius: 3px; }
     </style>
 </head>
 <body class="text-slate-800 antialiased font-sans trong-dong-bg">
@@ -173,6 +176,12 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto">
                 <div class="lg:col-span-8 relative bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl h-[500px] overflow-hidden group">
+                    
+                    <!-- NÚT CHỌN FILE MỚI -->
+                    <button id="reset-viewer-btn" class="hidden absolute top-4 right-4 z-30 bg-slate-800/80 hover:bg-brand-500 text-white px-4 py-2 rounded-xl backdrop-blur transition shadow-lg border border-slate-700 items-center gap-2">
+                        <i class="fa-solid fa-folder-open"></i> <span class="text-sm font-bold">Chọn file mới</span>
+                    </button>
+
                     <div id="viewer-container" class="absolute inset-0 z-0 cursor-move"></div>
                     
                     <div id="placeholder" class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-sm transition-opacity duration-300">
@@ -233,7 +242,6 @@
                     <span class="text-viet-gold font-bold tracking-wider uppercase text-sm mb-2 block">Ước tính dự án</span>
                     <h2 class="text-3xl md:text-4xl font-black mb-4 tracking-tight">Tính Giá Nhanh Theo Gram</h2>
                     <p class="text-slate-500">Dành cho trường hợp bạn đã có sẵn thông số trọng lượng từ phần mềm Slicer.</p>
-
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
@@ -292,7 +300,8 @@
             </div>
         </div>
     </section>
- <section id="pricing" class="py-24 bg-slate-50">
+
+     <section id="pricing" class="py-24 bg-slate-50">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-black mb-4 tracking-tight uppercase">Đặc tính Vật liệu Kỹ thuật</h2>
@@ -534,7 +543,7 @@
                                 facebook.com/4ghao <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-50"></i>
                             </a>
                         </div>
-                        <div class="flex items-center gap-5">
+                        <div class="flex items-center gap-5 group">
                             <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-[#1877F2] group-hover:bg-[#1877F2] group-hover:text-white group-hover:border-blue-400 transition-all shadow-lg">
                                 <i class="fa-solid fa-heart"></i>
                             </div>
@@ -599,16 +608,10 @@
         </div>
     </div>
      
-
     <script>
-        // --------------------------------------------------
-        // TÍNH NĂNG ÂM THANH (CÓ BẮT LỖI BẢO MẬT)
-        // --------------------------------------------------
         const bgMusic = document.getElementById('bgMusic');
         const audioBtn = document.getElementById('audio-btn');
         let isPlaying = false;
-
-        // Cài đặt âm lượng mặc định (0.5 là 50% để nhạc nền không quá ồn)
         bgMusic.volume = 0.5;
 
         audioBtn.addEventListener('click', () => {
@@ -618,66 +621,49 @@
                 audioBtn.classList.remove('animate-pulse', 'text-viet-gold', 'shadow-[0_0_20px_rgba(212,175,55,0.6)]');
                 isPlaying = false;
             } else {
-                // Sử dụng Promise để bắt lỗi nếu trình duyệt chặn
                 let playPromise = bgMusic.play();
-                
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        // Phát thành công
                         audioBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
                         audioBtn.classList.add('animate-pulse', 'text-viet-gold', 'shadow-[0_0_20px_rgba(212,175,55,0.6)]');
                         isPlaying = true;
                     }).catch(error => {
-                        // Báo lỗi nếu link hỏng hoặc bị trình duyệt chặn
                         console.error("Lỗi phát nhạc:", error);
-                        alert("Không thể phát nhạc! Vui lòng kiểm tra lại file nhac-nen.mp3 đã để đúng thư mục chưa nhé.");
+                        alert("Không thể phát nhạc!");
                     });
                 }
             }
         });
 
-        // --------------------------------------------------
-        // TÍNH NĂNG MINI GAME (MEMORY MATCH)
-        // --------------------------------------------------
         const gameModal = document.getElementById('game-modal');
         const gameBoard = document.getElementById('game-board');
         const winMessage = document.getElementById('win-message');
-        
-        // Dữ liệu Icon: Bao gồm Kỹ thuật (Creo, Hộp số) và Văn hóa (Đèn Nón Lá, Bánh Tét)
         const cardIcons = [
             { icon: '<i class="fa-solid fa-cube text-brand-500"></i>', name: 'In 3D' },
             { icon: '<i class="fa-solid fa-gear text-slate-600"></i>', name: 'Hộp Giảm Tốc' },
             { icon: '<i class="fa-solid fa-sort-up text-emerald-500"></i>', name: 'Nón Lá' },
-            { icon: '<i class="fa-solid fa-leaf text-green-600"></i>', name: 'Bánh Tét' }, // Bí mật từ Bánh Tét Miền Tây
+            { icon: '<i class="fa-solid fa-leaf text-green-600"></i>', name: 'Bánh Tét' },
             { icon: '<i class="fa-solid fa-coffee text-amber-600"></i>', name: 'Cà Phê' },
             { icon: '<i class="fa-solid fa-pen-ruler text-blue-600"></i>', name: 'Thiết kế Creo' }
         ];
 
-        let cards = [...cardIcons, ...cardIcons]; // Nhân đôi tạo cặp
-        let hasFlippedCard = false;
-        let lockBoard = false;
+        let cards = [...cardIcons, ...cardIcons];
+        let hasFlippedCard = false, lockBoard = false;
         let firstCard, secondCard;
         let matchCount = 0;
 
-        function shuffle() {
-            cards.sort(() => Math.random() - 0.5);
-        }
+        function shuffle() { cards.sort(() => Math.random() - 0.5); }
 
         function createBoard() {
             gameBoard.innerHTML = '';
             shuffle();
-            cards.forEach((item, index) => {
+            cards.forEach((item) => {
                 const card = document.createElement('div');
                 card.classList.add('memory-card');
                 card.dataset.name = item.name;
                 card.innerHTML = `
-                    <div class="front-face shadow-lg border border-brand-400">
-                        <i class="fa-solid fa-question text-white/50"></i>
-                    </div>
-                    <div class="back-face shadow-lg">
-                        <div class="text-3xl mb-1">${item.icon}</div>
-                        <div class="text-[10px] font-bold text-slate-600 uppercase tracking-tighter">${item.name}</div>
-                    </div>
+                    <div class="front-face shadow-lg border border-brand-400"><i class="fa-solid fa-question text-white/50"></i></div>
+                    <div class="back-face shadow-lg"><div class="text-3xl mb-1">${item.icon}</div><div class="text-[10px] font-bold text-slate-600 uppercase tracking-tighter">${item.name}</div></div>
                 `;
                 card.addEventListener('click', flipCard);
                 gameBoard.appendChild(card);
@@ -687,19 +673,10 @@
         }
 
         function flipCard() {
-            if (lockBoard) return;
-            if (this === firstCard) return;
-
+            if (lockBoard || this === firstCard) return;
             this.classList.add('flip');
-
-            if (!hasFlippedCard) {
-                hasFlippedCard = true;
-                firstCard = this;
-                return;
-            }
-
-            secondCard = this;
-            checkForMatch();
+            if (!hasFlippedCard) { hasFlippedCard = true; firstCard = this; return; }
+            secondCard = this; checkForMatch();
         }
 
         function checkForMatch() {
@@ -710,49 +687,24 @@
         function disableCards() {
             firstCard.removeEventListener('click', flipCard);
             secondCard.removeEventListener('click', flipCard);
-            
-            // Highlight viền vàng khi khớp
-            firstCard.querySelector('.back-face').classList.add('border-viet-gold', 'bg-amber-50');
-            secondCard.querySelector('.back-face').classList.add('border-viet-gold', 'bg-amber-50');
-
             matchCount++;
-            if (matchCount === cardIcons.length) {
-                setTimeout(() => { winMessage.classList.remove('hidden'); }, 500);
-            }
+            if (matchCount === cardIcons.length) setTimeout(() => winMessage.classList.remove('hidden'), 500);
             resetBoard();
         }
 
         function unflipCards() {
             lockBoard = true;
-            setTimeout(() => {
-                firstCard.classList.remove('flip');
-                secondCard.classList.remove('flip');
-                resetBoard();
-            }, 800);
+            setTimeout(() => { firstCard.classList.remove('flip'); secondCard.classList.remove('flip'); resetBoard(); }, 800);
         }
 
-        function resetBoard() {
-            [hasFlippedCard, lockBoard] = [false, false];
-            [firstCard, secondCard] = [null, null];
-        }
+        function resetBoard() { [hasFlippedCard, lockBoard] = [false, false]; [firstCard, secondCard] = [null, null]; }
 
-        function openGame() {
-            createBoard();
-            gameModal.classList.remove('hidden');
-            setTimeout(() => gameModal.classList.remove('opacity-0'), 10);
-        }
+        function openGame() { createBoard(); gameModal.classList.remove('hidden'); setTimeout(() => gameModal.classList.remove('opacity-0'), 10); }
+        function closeGame() { gameModal.classList.add('opacity-0'); setTimeout(() => gameModal.classList.add('hidden'), 300); }
 
-        function closeGame() {
-            gameModal.classList.add('opacity-0');
-            setTimeout(() => gameModal.classList.add('hidden'), 300);
-        }
-
-        // --------------------------------------------------
-        // LOGIC TÍNH GIÁ & THREE.JS BÊN DƯỚI (GIỮ NGUYÊN)
-        // --------------------------------------------------
         const pricing = { petg: { under: 1000, over: 600 }, pla: { under: 1100, over: 700 }, abs: { under: 1200, over: 800 } };
         const MIN_PRICE = 20000;
-        const CTV_PASSWORD = "GIAHAO-3D"; // Đã đổi mã nhận diện sang mã bí mật của game
+        const CTV_PASSWORD = "GIAHAO-3D";
 
         const materialInput = document.getElementById('calc-material');
         const weightInput = document.getElementById('calc-weight');
@@ -761,33 +713,20 @@
         function setMaterial(mat) {
             materialInput.value = mat;
             document.querySelectorAll('.mat-btn').forEach(btn => btn.classList.remove('active-material', 'border-brand-500'));
-            const activeBtn = document.getElementById('btn-' + mat);
-            activeBtn.classList.add('active-material', 'border-brand-500');
+            document.getElementById('btn-' + mat).classList.add('active-material', 'border-brand-500');
             calculateManualPrice();
         }
 
         function formatVND(amount) { return new Intl.NumberFormat('vi-VN').format(Math.round(amount)) + 'đ'; }
 
         function calculateManualPrice() {
-            const mat = materialInput.value;
-            const weight = parseFloat(weightInput.value) || 0;
-            const pass = passwordInput.value.toUpperCase(); // Cho phép gõ chữ thường
-            
-            const resSubtotal = document.getElementById('res-subtotal');
-            const resDiscount = document.getElementById('res-discount');
-            const resTotal = document.getElementById('res-total');
-            const ctvRow = document.getElementById('ctv-row');
-            const resCtv = document.getElementById('res-ctv');
+            const mat = materialInput.value, weight = parseFloat(weightInput.value) || 0, pass = passwordInput.value.toUpperCase();
+            const resSubtotal = document.getElementById('res-subtotal'), resDiscount = document.getElementById('res-discount'), resTotal = document.getElementById('res-total'), ctvRow = document.getElementById('ctv-row'), resCtv = document.getElementById('res-ctv');
 
-            if (weight <= 0) {
-                resSubtotal.innerText = '0đ'; resDiscount.innerText = '-0đ'; resTotal.innerText = '0đ';
-                ctvRow.classList.add('hidden'); return;
-            }
+            if (weight <= 0) { resSubtotal.innerText = '0đ'; resDiscount.innerText = '-0đ'; resTotal.innerText = '0đ'; ctvRow.classList.add('hidden'); return; }
 
             let rate = weight >= 400 ? pricing[mat].over : pricing[mat].under;
-            let subtotal = weight * rate;
-            let discount = 0;
-
+            let subtotal = weight * rate, discount = 0;
             if (subtotal > 1500000) discount = subtotal * 0.1;
             else if (subtotal > 1000000) discount = subtotal * 0.08;
             else if (subtotal > 500000) discount = subtotal * 0.05;
@@ -799,34 +738,25 @@
             resDiscount.innerText = '-' + formatVND(discount);
             resTotal.innerText = formatVND(finalTotal);
 
-            if (pass === CTV_PASSWORD) {
-                ctvRow.classList.remove('hidden');
-                resCtv.innerText = formatVND(finalTotal * 0.95);
-            } else { ctvRow.classList.add('hidden'); }
+            if (pass === CTV_PASSWORD) { ctvRow.classList.remove('hidden'); resCtv.innerText = formatVND(finalTotal * 0.95); } 
+            else { ctvRow.classList.add('hidden'); }
         }
 
         setMaterial('petg');
         [weightInput, passwordInput].forEach(el => el.addEventListener('input', calculateManualPrice));
 
-        // Three.js Logic (Như cũ)
-        const fileInput = document.getElementById('file-input');
-        const viewerContainer = document.getElementById('viewer-container');
-        const placeholder = document.getElementById('placeholder');
-        const loading = document.getElementById('loading');
-        const materialSelect = document.getElementById('material');
-        let currentVolumeCM3 = 0; let currentMesh = null;
+        const fileInput = document.getElementById('file-input'), viewerContainer = document.getElementById('viewer-container'), placeholder = document.getElementById('placeholder'), loading = document.getElementById('loading'), materialSelect = document.getElementById('material'), fileError = document.getElementById('file-error'), resetViewerBtn = document.getElementById('reset-viewer-btn');
+        let currentVolumeCM3 = 0, currentMesh = null;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, viewerContainer.clientWidth / viewerContainer.clientHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(viewerContainer.clientWidth, viewerContainer.clientHeight);
         viewerContainer.appendChild(renderer.domElement);
-
         scene.add(new THREE.AmbientLight(0xffffff, 0.6));
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
         dirLight.position.set(1, 1, 1).normalize();
         scene.add(dirLight);
-
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
 
@@ -834,8 +764,7 @@
         animate();
 
         function calculateVolume(geometry) {
-            let pos = geometry.attributes.position; let sum = 0;
-            let p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3();
+            let pos = geometry.attributes.position, sum = 0, p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3();
             for (let i = 0; i < pos.count / 3; i++) {
                 p1.fromBufferAttribute(pos, i * 3 + 0); p2.fromBufferAttribute(pos, i * 3 + 1); p3.fromBufferAttribute(pos, i * 3 + 2);
                 sum += p1.dot(p2.clone().cross(p3)) / 6.0;
@@ -843,88 +772,58 @@
             return Math.abs(sum); 
         }
 
-      // Khai báo thêm biến gọi thông báo lỗi
-const fileError = document.getElementById('file-error');
-
-fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0]; 
-    if (!file) return;
-
-    // Reset lại thông báo lỗi (ẩn đi nếu đang hiện)
-    fileError.classList.add('hidden');
-
-    // --- BẮT ĐẦU: KIỂM TRA DUNG LƯỢNG FILE ---
-    const maxSizeMB = 50; // Giới hạn 50MB (bạn có thể thay đổi số này)
-    const maxSizeBytes = maxSizeMB * 1024 * 1024;
-    
-    if (file.size > maxSizeBytes) {
-        const actualSize = (file.size / (1024 * 1024)).toFixed(1);
-        // Hiển thị lỗi
-        fileError.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> File quá lớn (${actualSize}MB). Vui lòng chọn file dưới ${maxSizeMB}MB để đảm bảo trải nghiệm.`;
-        fileError.classList.remove('hidden');
-        
-        // Reset input để người dùng có thể click chọn lại đúng file đó nếu họ nén lại
-        e.target.value = ''; 
-        return; // Dừng lại, không đưa vào FileReader nữa
-    }
-    // --- KẾT THÚC: KIỂM TRA DUNG LƯỢNG FILE ---
-
-    loading.classList.remove('hidden');
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        try {
-            const geometry = new THREE.STLLoader().parse(event.target.result);
-            currentVolumeCM3 = calculateVolume(geometry) / 1000;
-            geometry.computeBoundingBox(); const box = geometry.boundingBox;
-            document.getElementById('dim-display').innerHTML = `${Math.abs(box.max.x - box.min.x).toFixed(1)} x ${Math.abs(box.max.y - box.min.y).toFixed(1)} x ${Math.abs(box.max.z - box.min.z).toFixed(1)} <span class="text-xs">mm</span>`;
-            
-            const updatePricing3D = () => {
-                if (currentVolumeCM3 === 0) return;
-                const opt = materialSelect.options[materialSelect.selectedIndex];
-                const weight = currentVolumeCM3 * parseFloat(opt.getAttribute('data-density'));
-                document.getElementById('weight-display').innerHTML = `${weight.toFixed(1)} <span class="text-sm">g</span>`;
-                document.getElementById('price-display').innerText = `${Math.round(weight * parseInt(opt.value)).toLocaleString('vi-VN')} đ`;
-            };
-            materialSelect.addEventListener('change', updatePricing3D); updatePricing3D();
-
-            if (currentMesh) scene.remove(currentMesh);
-            currentMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0xD4AF37, roughness: 0.4, metalness: 0.3 }));
-            geometry.center(); scene.add(currentMesh);
-            geometry.computeBoundingSphere(); camera.position.z = geometry.boundingSphere.radius * 2.5;
-            placeholder.classList.add('opacity-0', 'pointer-events-none');
-        } catch (error) { 
-            alert("Lỗi đọc file STL. File có thể bị hỏng hoặc sai định dạng."); 
-        } finally { 
-            loading.classList.add('hidden'); 
-        }
-    };
-    reader.readAsArrayBuffer(file);
-});
-        // --------------------------------------------------
-        // TÍNH NĂNG LÊN ĐẦU TRANG (BACK TO TOP)
-        // --------------------------------------------------
-        const backToTopBtn = document.getElementById('backToTopBtn');
-
-        // Lắng nghe sự kiện cuộn chuột
-        window.addEventListener('scroll', () => {
-            // Nếu cuộn xuống quá 400px thì hiện nút lên
-            if (window.scrollY > 400) {
-                backToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
-                backToTopBtn.classList.add('opacity-100', 'translate-y-0');
-            } else {
-                // Nếu ở trên cùng thì ẩn nút đi
-                backToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
-                backToTopBtn.classList.remove('opacity-100', 'translate-y-0');
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            fileError.classList.add('hidden');
+            const maxSizeMB = 50, maxSizeBytes = maxSizeMB * 1024 * 1024;
+            if (file.size > maxSizeBytes) {
+                fileError.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> File quá lớn (${(file.size / (1024 * 1024)).toFixed(1)}MB). Vui lòng chọn file dưới ${maxSizeMB}MB.`;
+                fileError.classList.remove('hidden'); e.target.value = ''; return;
             }
+            loading.classList.remove('hidden');
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const geometry = new THREE.STLLoader().parse(event.target.result);
+                    currentVolumeCM3 = calculateVolume(geometry) / 1000;
+                    geometry.computeBoundingBox(); const box = geometry.boundingBox;
+                    document.getElementById('dim-display').innerHTML = `${Math.abs(box.max.x - box.min.x).toFixed(1)} x ${Math.abs(box.max.y - box.min.y).toFixed(1)} x ${Math.abs(box.max.z - box.min.z).toFixed(1)} <span class="text-xs">mm</span>`;
+                    
+                    const updatePricing3D = () => {
+                        if (currentVolumeCM3 === 0) return;
+                        const opt = materialSelect.options[materialSelect.selectedIndex];
+                        const weight = currentVolumeCM3 * parseFloat(opt.getAttribute('data-density'));
+                        document.getElementById('weight-display').innerHTML = `${weight.toFixed(1)} <span class="text-sm">g</span>`;
+                        document.getElementById('price-display').innerText = `${Math.round(weight * parseInt(opt.value)).toLocaleString('vi-VN')} đ`;
+                    };
+                    materialSelect.addEventListener('change', updatePricing3D); updatePricing3D();
+                    if (currentMesh) scene.remove(currentMesh);
+                    currentMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0xD4AF37, roughness: 0.4, metalness: 0.3 }));
+                    geometry.center(); scene.add(currentMesh);
+                    geometry.computeBoundingSphere(); camera.position.z = geometry.boundingSphere.radius * 2.5;
+                    placeholder.classList.add('opacity-0', 'pointer-events-none');
+                    resetViewerBtn.classList.remove('hidden'); resetViewerBtn.classList.add('flex');
+                } catch (error) { alert("Lỗi đọc file STL."); } finally { loading.classList.add('hidden'); }
+            };
+            reader.readAsArrayBuffer(file);
         });
 
-        // Hàm cuộn mượt mà lên top
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
+        resetViewerBtn.addEventListener('click', () => {
+            if (currentMesh) { scene.remove(currentMesh); currentMesh.geometry.dispose(); currentMesh.material.dispose(); currentMesh = null; }
+            currentVolumeCM3 = 0; fileInput.value = '';
+            document.getElementById('dim-display').innerHTML = `0 x 0 x 0 <span class="text-xs">mm</span>`;
+            document.getElementById('weight-display').innerHTML = `0.00 <span class="text-sm">g</span>`;
+            document.getElementById('price-display').innerText = `0đ`;
+            placeholder.classList.remove('opacity-0', 'pointer-events-none');
+            resetViewerBtn.classList.add('hidden'); resetViewerBtn.classList.remove('flex');
+        });
+
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) { backToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4'); backToTopBtn.classList.add('opacity-100', 'translate-y-0'); } 
+            else { backToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4'); backToTopBtn.classList.remove('opacity-100', 'translate-y-0'); }
+        });
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
     </script>
 </body>
 </html>
