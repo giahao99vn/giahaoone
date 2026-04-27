@@ -83,10 +83,9 @@
 </head>
 <body class="text-slate-800 antialiased font-sans trong-dong-bg">
 
-    <audio id="bgMusic" loop preload="auto">
-        <source src="https://raw.githubusercontent.com/giahao99vn/giahaoone/refs/heads/main/mixkit-beautiful-dream-493.mp3" type="audio/mpeg">
+    <audio id="bgMusic" loop>
+        <source src="https://pixabay.com/audio/download/relaxing-light-asian-music-116666.mp3" type="audio/mpeg">
     </audio>
-
     <header class="sticky top-0 z-50 glass-header">
         <div class="container mx-auto px-6 h-20 flex items-center justify-between">
             <a href="#" class="flex items-center gap-4 group">
@@ -586,23 +585,38 @@
 
     <script>
         // --------------------------------------------------
-        // TÍNH NĂNG ÂM THANH (AUDIO TOGGLE)
+        // TÍNH NĂNG ÂM THANH (CÓ BẮT LỖI BẢO MẬT)
         // --------------------------------------------------
         const bgMusic = document.getElementById('bgMusic');
         const audioBtn = document.getElementById('audio-btn');
         let isPlaying = false;
 
+        // Cài đặt âm lượng mặc định (0.5 là 50% để nhạc nền không quá ồn)
+        bgMusic.volume = 0.5;
+
         audioBtn.addEventListener('click', () => {
             if (isPlaying) {
                 bgMusic.pause();
                 audioBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
-                audioBtn.classList.remove('animate-pulse', 'text-viet-gold');
+                audioBtn.classList.remove('animate-pulse', 'text-viet-gold', 'shadow-[0_0_20px_rgba(212,175,55,0.6)]');
+                isPlaying = false;
             } else {
-                bgMusic.play();
-                audioBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                audioBtn.classList.add('animate-pulse', 'text-viet-gold');
+                // Sử dụng Promise để bắt lỗi nếu trình duyệt chặn
+                let playPromise = bgMusic.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // Phát thành công
+                        audioBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                        audioBtn.classList.add('animate-pulse', 'text-viet-gold', 'shadow-[0_0_20px_rgba(212,175,55,0.6)]');
+                        isPlaying = true;
+                    }).catch(error => {
+                        // Báo lỗi nếu link hỏng hoặc bị trình duyệt chặn
+                        console.error("Lỗi phát nhạc:", error);
+                        alert("Không thể phát nhạc! Vui lòng kiểm tra lại file nhac-nen.mp3 đã để đúng thư mục chưa nhé.");
+                    });
+                }
             }
-            isPlaying = !isPlaying;
         });
 
         // --------------------------------------------------
