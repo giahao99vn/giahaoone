@@ -632,16 +632,30 @@
                         </div>
                     </div>
 
-                    <!-- Khối Hình ảnh/Video -->
-                    <div class="order-1 md:order-2 relative rounded-xl overflow-hidden border-2 border-gray-800 shadow-2xl">
-                        <!-- Bạn có thể dùng thẻ <video> dưới đây nếu muốn nhúng trực tiếp đoạn video đó vào web, hoặc thay bằng thẻ <img> -->
-                        <video class="w-full h-auto object-cover" autoplay loop muted playsinline>
-                            <source src="https://cdn.jsdelivr.net/gh/giahao99vn/giahaoone/nhuathaibinh.mp4" type="video/mp4">
-                            Trình duyệt của bạn không hỗ trợ thẻ video.
-                        </video>
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent opacity-80"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="bg-black/70 text-yellow-500 text-sm font-bold px-3 py-1 rounded border border-yellow-600/50">Hạt nhựa màu xanh chuẩn sản xuất</span>
+                    <!-- Khối Hình ảnh/Video & Bộ sưu tập -->
+                    <div class="order-1 md:order-2 flex flex-col gap-4">
+                        <!-- Video chính -->
+                        <div class="relative rounded-xl overflow-hidden border-2 border-gray-800 shadow-2xl h-64 md:h-80">
+                            <video class="w-full h-full object-cover" autoplay loop muted playsinline>
+                                <source src="https://cdn.jsdelivr.net/gh/giahao99vn/giahaoone/nhuathaibinh.mp4" type="video/mp4">
+                            </video>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent opacity-80"></div>
+                            <div class="absolute bottom-3 left-3">
+                                <span class="bg-black/80 text-yellow-500 text-xs font-bold px-2 py-1 rounded border border-yellow-600/50">Dây chuyền sản xuất trực tiếp</span>
+                            </div>
+                        </div>
+
+                        <!-- 3 Ảnh tĩnh bên dưới -->
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="rounded-lg overflow-hidden border border-gray-700 hover:border-yellow-500 transition-colors cursor-crosshair">
+                                <img src="https://cdn.jsdelivr.net/gh/giahao99vn/giahaoone/nhuahdpe1.jpg" alt="Hạt nhựa HDPE 1" class="w-full h-20 md:h-24 object-cover hover:scale-110 transition-transform duration-300">
+                            </div>
+                            <div class="rounded-lg overflow-hidden border border-gray-700 hover:border-yellow-500 transition-colors cursor-crosshair">
+                                <img src="https://cdn.jsdelivr.net/gh/giahao99vn/giahaoone/nhuahdpe2.jpg" alt="Hạt nhựa HDPE 2" class="w-full h-20 md:h-24 object-cover hover:scale-110 transition-transform duration-300">
+                            </div>
+                            <div class="rounded-lg overflow-hidden border border-gray-700 hover:border-yellow-500 transition-colors cursor-crosshair">
+                                <img src="https://cdn.jsdelivr.net/gh/giahao99vn/giahaoone/nhuahdpe3.jpg" alt="Hạt nhựa HDPE 3" class="w-full h-20 md:h-24 object-cover hover:scale-110 transition-transform duration-300">
+                            </div>
                         </div>
                     </div>
                 </div>
